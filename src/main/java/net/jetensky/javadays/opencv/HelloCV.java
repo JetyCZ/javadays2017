@@ -13,11 +13,21 @@ public class HelloCV {
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
         UIUtil.showWindow(sample);
-        UIUtil.showWindow(edgeDetection(sample));
+
+        Mat edges = edgeDetection(sample);
+        Mat dilated = dilate(edges);
+
+        UIUtil.showWindow(dilated);
 
     }
 
-    
+    private static Mat dilate(Mat edges) {
+        Mat dilated = new Mat();
+        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(3,3)));
+        return dilated;
+    }
+
+
     private static Mat edgeDetection(Mat sample) {
         Mat canny = new Mat();
         double mean = Core.mean(sample).val[0];
