@@ -46,4 +46,8 @@ public class UIUtil {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
+
+    public static Mat load(String file) {
+        return Imgcodecs.imread(file);
+    }
 }
