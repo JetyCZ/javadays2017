@@ -1,7 +1,6 @@
 package net.jetensky.javadays.opencv;
 
 import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class HelloCV {
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
-        /*
+
         Mat edges = edgeDetection(sample);
         Mat dilated = dilate(edges);
 
@@ -24,22 +23,12 @@ public class HelloCV {
 
         drawContours(sample, contours);
 
-        Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
+        // Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
+        Mat withoutBackground = applyMaskToValueChannel(sample, backgroundMask);
 
         UIUtil.showWindow(withoutBackground, 900);
-        */
 
-        Mat sampleLab = new Mat();
-        // sample.setTo(new Scalar(255,255,255));
-
-        Imgproc.cvtColor(sample, sampleLab, Imgproc.COLOR_BGR2HSV);
-        Imgcodecs.imwrite("/tmp/a.png", sampleLab);
-
-        List<Mat> channelsHsv = new ArrayList<>();
-
-        Core.split(sampleLab, channelsHsv);
-        UIUtil.showWindow(channelsHsv.get(1), 0);
-        UIUtil.showWindow(sample, 900);
+        UIUtil.showWindow(sample, 0);
 
     }
 
@@ -52,6 +41,21 @@ public class HelloCV {
         }
         Mat withoutBackground = new Mat();
         Core.merge(bgrChannels, withoutBackground);
+        return withoutBackground;
+    }
+
+    private static Mat applyMaskToValueChannel(Mat matWithThreeChannels, Mat backgroundMask) {
+        Mat hsv = new Mat();
+        Imgproc.cvtColor(matWithThreeChannels, hsv, Imgproc.COLOR_BGR2HSV);
+
+        List<Mat> hsvChannels = new ArrayList<>();
+        Core.split(hsv, hsvChannels);
+
+        Core.bitwise_and(hsvChannels.get(2), backgroundMask, hsvChannels.get(2));
+
+        Mat withoutBackground = new Mat();
+        Core.merge(hsvChannels, withoutBackground);
+        Imgproc.cvtColor(withoutBackground, withoutBackground, Imgproc.COLOR_HSV2BGR);
         return withoutBackground;
     }
 
