@@ -20,16 +20,40 @@ public class HelloCV {
         Mat dilated = dilate(edges);
 
         List<MatOfPoint> contours = findContours(dilated);
+
+        Mat backgroundMask = backgroundMaskFromContour(edges, contours);
+
         drawContours(sample, contours);
 
-        UIUtil.showWindow(sample, 0);
-        UIUtil.showWindow(edges, 900);
+        // UIUtil.showWindow(sample, 0);
+        Mat foregroundMat = new Mat();
+
+        List<Mat> bgrChannels = new ArrayList<>();
+        Core.split(sample, bgrChannels);
+
+        Core.bitwise_and(bgrChannels.get(0), backgroundMask, foregroundMat);
+
+        
+        UIUtil.showWindow(foregroundMat, 900);
 
 
     }
 
+    private static Mat backgroundMaskFromContour(Mat mat, List<MatOfPoint> contours) {
+        Mat backgroundMask = new Mat(mat.size(), mat.type());
+        backgroundMask.setTo(new Scalar(0));
+        drawContours(backgroundMask, contours, new Scalar(255), -1);
+        return backgroundMask;
+    }
+
     private static void drawContours(Mat sample, List<MatOfPoint> contours) {
-        Imgproc.drawContours(sample, contours, 0, new Scalar(0, 0, 255),5);
+        Scalar color = new Scalar(0, 0, 255);
+        int thickness = 5;
+        drawContours(sample, contours, color, thickness);
+    }
+
+    private static void drawContours(Mat sample, List<MatOfPoint> contours, Scalar color, int thickness) {
+        Imgproc.drawContours(sample, contours, 0, color, thickness);
     }
 
     private static List<MatOfPoint> findContours(Mat dilated) {
