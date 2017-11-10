@@ -3,6 +3,9 @@ package net.jetensky.javadays.opencv;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HelloCV {
 
     public static void main(String[] args){
@@ -12,18 +15,33 @@ public class HelloCV {
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
-        UIUtil.showWindow(sample);
 
         Mat edges = edgeDetection(sample);
         Mat dilated = dilate(edges);
 
-        UIUtil.showWindow(dilated);
+        List<MatOfPoint> contours = findContours(dilated);
+        drawContours(sample, contours);
 
+        UIUtil.showWindow(sample);
+        UIUtil.showWindow(dilated);
+        
+
+    }
+
+    private static void drawContours(Mat sample, List<MatOfPoint> contours) {
+        Imgproc.drawContours(sample, contours, 0, new Scalar(0, 0, 255),5);
+    }
+
+    private static List<MatOfPoint> findContours(Mat dilated) {
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(dilated, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        return contours;
     }
 
     private static Mat dilate(Mat edges) {
         Mat dilated = new Mat();
-        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(3,3)));
+        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(31,31)));
         return dilated;
     }
 
