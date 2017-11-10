@@ -30,9 +30,16 @@ public class HelloCV {
         */
 
         Mat sampleLab = new Mat();
-        Imgproc.cvtColor(sample, sampleLab, Imgproc.COLOR_BGR2Lab);
+        // sample.setTo(new Scalar(255,255,255));
+
+        Imgproc.cvtColor(sample, sampleLab, Imgproc.COLOR_BGR2HSV);
         Imgcodecs.imwrite("/tmp/a.png", sampleLab);
-        UIUtil.showWindow(sampleLab, 900);
+
+        List<Mat> channelsHsv = new ArrayList<>();
+
+        Core.split(sampleLab, channelsHsv);
+        UIUtil.showWindow(channelsHsv.get(1), 0);
+        UIUtil.showWindow(sample, 900);
 
     }
 
