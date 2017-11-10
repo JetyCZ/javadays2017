@@ -17,9 +17,9 @@ public class UIUtil {
         Imgcodecs.imwrite("/tmp/a.png", mat);
     }
 
-    public static void showWindow(Mat mat) {
+    public static void showWindow(Mat mat, int x) {
         BufferedImage bufferedImage = matToBufferedImage(mat);
-        showWindow(bufferedImage);
+        showWindow(bufferedImage, x);
     }
 
     private static BufferedImage matToBufferedImage(Mat frame) {
@@ -38,9 +38,10 @@ public class UIUtil {
         return image;
     }
 
-    private static void showWindow(BufferedImage img)  {
+    private static void showWindow(BufferedImage img, int x)  {
         JFrame frame = new JFrame();
         frame.getContentPane().add(new JLabel(new ImageIcon(img)));
+        frame.setLocation(x, 0);
         frame.setSize(img.getWidth(), img.getHeight() + 30);
         frame.setTitle("Image " + img.getWidth() + "x" + img.getHeight() + ", type=" + img.getType());
         frame.setVisible(true);

@@ -19,11 +19,11 @@ public class HelloCV {
         Mat edges = edgeDetection(sample);
         Mat dilated = dilate(edges);
 
-        List<MatOfPoint> contours = findContours(dilated);
+        List<MatOfPoint> contours = findContours(edges);
         drawContours(sample, contours);
 
-        UIUtil.showWindow(sample);
-        UIUtil.showWindow(dilated);
+        UIUtil.showWindow(sample, 0);
+        UIUtil.showWindow(edges, 900);
         
 
     }
