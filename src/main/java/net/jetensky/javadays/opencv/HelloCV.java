@@ -1,6 +1,7 @@
 package net.jetensky.javadays.opencv;
 
 import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class HelloCV {
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
+        /*
         Mat edges = edgeDetection(sample);
         Mat dilated = dilate(edges);
 
@@ -25,6 +27,12 @@ public class HelloCV {
         Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
 
         UIUtil.showWindow(withoutBackground, 900);
+        */
+
+        Mat sampleLab = new Mat();
+        Imgproc.cvtColor(sample, sampleLab, Imgproc.COLOR_BGR2Lab);
+        Imgcodecs.imwrite("/tmp/a.png", sampleLab);
+        UIUtil.showWindow(sampleLab, 900);
 
     }
 
