@@ -41,7 +41,7 @@ public class HelloCV {
 
     private static Mat dilate(Mat edges) {
         Mat dilated = new Mat();
-        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(31,31)));
+        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(3,3)));
         return dilated;
     }
 
