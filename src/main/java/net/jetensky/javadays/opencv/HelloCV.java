@@ -12,7 +12,7 @@ public class HelloCV {
         System.load("/usr/share/OpenCV/java/libopencv_java320.so");
         Mat mat = Mat.eye(new Size(300,300), CvType.CV_8U);
         mat.setTo(new Scalar(128));
-        // UIUtil.showWindow(mat);
+        
         Imgcodecs.imwrite("/tmp/a.png", mat);
     }
 }
