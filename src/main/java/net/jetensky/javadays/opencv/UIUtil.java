@@ -23,6 +23,8 @@ public class UIUtil {
     }
 
     private static BufferedImage matToBufferedImage(Mat frame) {
+        Imgcodecs.imwrite("/tmp/a.png", frame);
+
         int type = 0;
         if (frame.channels() == 1) {
             type = BufferedImage.TYPE_BYTE_GRAY;
