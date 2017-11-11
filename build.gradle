@@ -12,6 +12,5 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
-    compile files('/usr/share/OpenCV/java/opencv-320.jar')
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
