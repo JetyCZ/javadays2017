@@ -1,7 +1,6 @@
 package net.jetensky.javadays.opencv;
 
 import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -12,35 +11,52 @@ public class HelloCV {
     public static void main(String[] args){
         System.load("/usr/share/OpenCV/java/libopencv_java320.so");
 
-        Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
+        Mat flagDark = UIUtil.load(HelloCV.class.getResource("/img/dark.png").getFile());
+        Mat flagLight = UIUtil.load(HelloCV.class.getResource("/img/light.png").getFile());
 
-        /*
-        Mat edges = edgeDetection(sample);
-        Mat dilated = dilate(edges);
+        /*Mat flagThresholdDark = threshold(flagDark, 80);
+        Mat flagThresholdLight = threshold(flagLight, 230);*/
 
-        List<MatOfPoint> contours = findContours(dilated);
+        Mat flagThresholdDark = kmeans(flagDark);
+        // Mat flagThresholdLight = kmeans(flagLight);
 
-        Mat backgroundMask = backgroundMaskFromContour(edges, contours);
+        /*UIUtil.showWindow(flagThresholdDark, 0);
+        UIUtil.showWindow(flagThresholdLight, 900);*/
 
-        drawContours(sample, contours);
+    }
 
-        Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
+    private static Mat kmeans(Mat mat) {
 
-        UIUtil.showWindow(withoutBackground, 900);
-        */
+        // Mat data, int K, Mat bestLabels, TermCriteria criteria, int attempts, int flags
 
-        Mat sampleLab = new Mat();
-        // sample.setTo(new Scalar(255,255,255));
+        TermCriteria termCriteria = new TermCriteria(TermCriteria.COUNT, 100, 1);
+        Mat labels = new Mat();
+        Mat data = new Mat(5,1, CvType.CV_32F);
 
-        Imgproc.cvtColor(sample, sampleLab, Imgproc.COLOR_BGR2HSV);
-        Imgcodecs.imwrite("/tmp/a.png", sampleLab);
+        data.put(0,0,10);
+        data.put(1,0,11);
+        data.put(2,0,25);
+        data.put(3,0,104);
+        data.put(4,0,106);
 
-        List<Mat> channelsHsv = new ArrayList<>();
+        Mat centers = new Mat();
+        Core.kmeans(data, 3, labels, termCriteria, 1, 0, centers);
 
-        Core.split(sampleLab, channelsHsv);
-        UIUtil.showWindow(channelsHsv.get(1), 0);
-        UIUtil.showWindow(sample, 900);
+        System.out.println("Data: " + data.dump());
+        System.out.println("Centers: " + centers.dump());
+        System.out.println("Labels:" + labels.dump());
+        return null;
+    }
 
+    private static Mat threshold(Mat flagDark, int valueLowerThreshold) {
+        Mat flagThreshold = new Mat();
+        Imgproc.cvtColor(flagDark, flagThreshold, Imgproc.COLOR_BGR2HSV);
+        Core.inRange(flagThreshold,
+                new Scalar(0,0, valueLowerThreshold),
+                new Scalar(255,255,255),
+                flagThreshold
+        );
+        return flagThreshold;
     }
 
     private static Mat applyMaskToAllChannels(Mat matWithThreeChannels, Mat backgroundMask) {
