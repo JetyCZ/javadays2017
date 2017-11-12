@@ -46,6 +46,11 @@ public class UIUtil {
         frame.setTitle("Image " + img.getWidth() + "x" + img.getHeight() + ", type=" + img.getType());
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Mat load(String file) {

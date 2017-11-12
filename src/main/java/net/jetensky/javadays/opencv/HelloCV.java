@@ -11,25 +11,36 @@ public class HelloCV {
     public static void main(String[] args){
         System.load("/usr/share/OpenCV/java/libopencv_java320.so");
 
-        Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
+        Mat flagDark = UIUtil.load(HelloCV.class.getResource("/img/dark.png").getFile());
+        Mat flagLight = UIUtil.load(HelloCV.class.getResource("/img/light.png").getFile());
 
+        /*Mat flagThresholdDark = threshold(flagDark, 80);
+        Mat flagThresholdLight = threshold(flagLight, 230);*/
 
-        Mat edges = edgeDetection(sample);
-        Mat dilated = dilate(edges);
+        List<ColorQuantisation.ClusterInfo> clusterInfosDark = kmeans(flagDark);
+        List<ColorQuantisation.ClusterInfo> clusterInfosLight = kmeans(flagLight);
 
-        List<MatOfPoint> contours = findContours(dilated);
+        UIUtil.showWindow(clusterInfosDark.get(1).cluster, 0);
+        UIUtil.showWindow(clusterInfosLight.get(1).cluster, 300);
 
-        Mat backgroundMask = backgroundMaskFromContour(edges, contours);
+    }
 
-        drawContours(sample, contours);
+    private static List<ColorQuantisation.ClusterInfo> kmeans(Mat mat) {
+        ColorQuantisation colorQuantisation = new ColorQuantisation();
+        List<ColorQuantisation.ClusterInfo> clusters = colorQuantisation.clusters(mat, 2);
+        UIUtil.showWindow(colorQuantisation.getQuantizedImg(), 0);
+        return clusters;
+    }
 
-        // Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
-        Mat withoutBackground = applyMaskToValueChannel(sample, backgroundMask);
-
-        UIUtil.showWindow(withoutBackground, 900);
-
-        UIUtil.showWindow(sample, 0);
-
+    private static Mat threshold(Mat flagDark, int valueLowerThreshold) {
+        Mat flagThreshold = new Mat();
+        Imgproc.cvtColor(flagDark, flagThreshold, Imgproc.COLOR_BGR2HSV);
+        Core.inRange(flagThreshold,
+                new Scalar(0,0, valueLowerThreshold),
+                new Scalar(255,255,255),
+                flagThreshold
+        );
+        return flagThreshold;
     }
 
     private static Mat applyMaskToAllChannels(Mat matWithThreeChannels, Mat backgroundMask) {
@@ -41,21 +52,6 @@ public class HelloCV {
         }
         Mat withoutBackground = new Mat();
         Core.merge(bgrChannels, withoutBackground);
-        return withoutBackground;
-    }
-
-    private static Mat applyMaskToValueChannel(Mat matWithThreeChannels, Mat backgroundMask) {
-        Mat hsv = new Mat();
-        Imgproc.cvtColor(matWithThreeChannels, hsv, Imgproc.COLOR_BGR2HSV);
-
-        List<Mat> hsvChannels = new ArrayList<>();
-        Core.split(hsv, hsvChannels);
-
-        Core.bitwise_and(hsvChannels.get(2), backgroundMask, hsvChannels.get(2));
-
-        Mat withoutBackground = new Mat();
-        Core.merge(hsvChannels, withoutBackground);
-        Imgproc.cvtColor(withoutBackground, withoutBackground, Imgproc.COLOR_HSV2BGR);
         return withoutBackground;
     }
 
