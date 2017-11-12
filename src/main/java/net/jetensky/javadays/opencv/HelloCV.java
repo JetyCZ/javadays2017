@@ -15,49 +15,29 @@ public class HelloCV {
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
+        Mat hsv = new Mat();
+        Imgproc.cvtColor(sample, hsv, Imgproc.COLOR_BGR2HSV);
 
-        Mat edges = edgeDetection(sample);
-        Mat dilated = dilate(edges);
 
-        List<MatOfPoint> contours = findContours(dilated);
+        List<Mat> channels = new ArrayList<>();
+        Core.split(hsv, channels);
 
-        Mat backgroundMask = backgroundMaskFromContour(edges, contours);
+        UIUtil.showWindow(sample, 900);
+        UIUtil.showWindow(channels.get(1), 0);
+        UIUtil.showWindow(channels.get(2), 0);
 
-        drawContours(sample, contours);
-
-        Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
-
-        UIUtil.showWindow(withoutBackground, 900);
 
     }
 
-    private static Mat applyMaskToAllChannels(Mat matWithThreeChannels, Mat backgroundMask) {
-        List<Mat> bgrChannels = new ArrayList<>();
-        Core.split(matWithThreeChannels, bgrChannels);
-
-        for (Mat bgrChannel : bgrChannels) {
-            Core.bitwise_and(bgrChannel, backgroundMask, bgrChannel);
-        }
-        Mat withoutBackground = new Mat();
-        Core.merge(bgrChannels, withoutBackground);
-        return withoutBackground;
-    }
-
-    private static Mat backgroundMaskFromContour(Mat mat, List<MatOfPoint> contours) {
-        Mat backgroundMask = new Mat(mat.size(), mat.type());
-        backgroundMask.setTo(new Scalar(0));
-        drawContours(backgroundMask, contours, new Scalar(255), -1);
-        return backgroundMask;
+    private static Mat foregroundMaskFromContour(Mat mat, List<MatOfPoint> contours) {
+        Mat mask = new Mat(mat.size(), CvType.CV_8U);
+        mask.setTo(new Scalar(0));
+        Imgproc.drawContours(mask, contours, 0, new Scalar(255),-1);
+        return mask;
     }
 
     private static void drawContours(Mat sample, List<MatOfPoint> contours) {
-        Scalar color = new Scalar(0, 0, 255);
-        int thickness = 5;
-        drawContours(sample, contours, color, thickness);
-    }
-
-    private static void drawContours(Mat sample, List<MatOfPoint> contours, Scalar color, int thickness) {
-        Imgproc.drawContours(sample, contours, 0, color, thickness);
+        Imgproc.drawContours(sample, contours, 0, new Scalar(0, 0, 255),3);
     }
 
     private static List<MatOfPoint> findContours(Mat dilated) {
@@ -69,7 +49,7 @@ public class HelloCV {
 
     private static Mat dilate(Mat edges) {
         Mat dilated = new Mat();
-        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(31,31)));
+        Imgproc.dilate(edges, dilated, Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(3,3)));
         return dilated;
     }
 
