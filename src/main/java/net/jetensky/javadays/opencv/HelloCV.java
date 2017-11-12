@@ -31,17 +31,11 @@ public class HelloCV {
         Imgproc.erode(foregroundMask, foregroundMask, Imgproc.getStructuringElement(Imgproc.MORPH_ERODE, new Size(4,4)));
         sample.copyTo(art, foregroundMask);
 
-        /*
-        Mat merged = new Mat();
-
+        Mat backgroundSubstracted = sample.clone();
         Core.bitwise_not(foregroundMask, foregroundMask);
-        sampleChannels.get(0).setTo(new Scalar(0), foregroundMask);
-        sampleChannels.get(1).setTo(new Scalar(1), foregroundMask);
-        sampleChannels.get(2).setTo(new Scalar(2), foregroundMask);
-        Core.merge(sampleChannels, merged);
-        Imgcodecs.imwrite("/tmp/a.png", merged);
-        */
+        backgroundSubstracted.setTo(new Scalar(0,0,0), foregroundMask);
 
+        UIUtil.showWindow(backgroundSubstracted, 0);
         UIUtil.showWindow(art, 900);
 
 
