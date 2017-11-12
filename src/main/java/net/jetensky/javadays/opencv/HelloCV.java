@@ -23,6 +23,9 @@ public class HelloCV {
         /*UIUtil.showWindow(flagThresholdDark, 0);
         UIUtil.showWindow(flagThresholdLight, 900);*/
 
+        // in v9, quantize flag's images with k-means cluster, and
+        // instead of applying threshold, substract background as darker cluster.
+
     }
 
     private static Mat kmeans(Mat mat) {
