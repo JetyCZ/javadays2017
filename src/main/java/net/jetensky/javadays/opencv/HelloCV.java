@@ -1,7 +1,6 @@
 package net.jetensky.javadays.opencv;
 
 import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -12,28 +11,28 @@ public class HelloCV {
     public static void main(String[] args){
         System.load("/usr/share/OpenCV/java/libopencv_java320.so");
 
-        Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
+        Mat flagDark = UIUtil.load(HelloCV.class.getResource("/img/dark.png").getFile());
+        Mat flagLight = UIUtil.load(HelloCV.class.getResource("/img/light.png").getFile());
 
-        /*
-        Mat edges = edgeDetection(sample);
-        Mat dilated = dilate(edges);
+        Mat flagThresholdDark = threshold(flagDark, 80);
+        Mat flagThresholdLight = threshold(flagLight, 230);
 
-        List<MatOfPoint> contours = findContours(dilated);
+        UIUtil.showWindow(flagThresholdDark, 0);
+        UIUtil.showWindow(flagThresholdLight, 900);
 
-        Mat backgroundMask = backgroundMaskFromContour(edges, contours);
+        
 
-        drawContours(sample, contours);
+    }
 
-        Mat withoutBackground = applyMaskToAllChannels(sample, backgroundMask);
-
-        UIUtil.showWindow(withoutBackground, 900);
-        */
-
-        Mat sampleLab = new Mat();
-        Imgproc.cvtColor(sample, sampleLab, Imgproc.COLOR_BGR2Lab);
-        Imgcodecs.imwrite("/tmp/a.png", sampleLab);
-        UIUtil.showWindow(sampleLab, 900);
-
+    private static Mat threshold(Mat flagDark, int valueLowerThreshold) {
+        Mat flagThreshold = new Mat();
+        Imgproc.cvtColor(flagDark, flagThreshold, Imgproc.COLOR_BGR2HSV);
+        Core.inRange(flagThreshold,
+                new Scalar(0,0, valueLowerThreshold),
+                new Scalar(255,255,255),
+                flagThreshold
+                );
+        return flagThreshold;
     }
 
     private static Mat applyMaskToAllChannels(Mat matWithThreeChannels, Mat backgroundMask) {

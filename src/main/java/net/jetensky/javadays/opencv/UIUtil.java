@@ -38,14 +38,19 @@ public class UIUtil {
         return image;
     }
 
-    private static void showWindow(BufferedImage img, int x)  {
+    private static void showWindow(BufferedImage img, int x) {
         JFrame frame = new JFrame();
         frame.getContentPane().add(new JLabel(new ImageIcon(img)));
         frame.setLocation(x, 0);
         frame.setSize(img.getWidth(), img.getHeight() + 30);
         frame.setTitle("Image " + img.getWidth() + "x" + img.getHeight() + ", type=" + img.getType());
-        frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Mat load(String file) {
