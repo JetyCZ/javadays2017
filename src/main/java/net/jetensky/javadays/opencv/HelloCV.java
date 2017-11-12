@@ -16,6 +16,7 @@ public class HelloCV {
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
         Mat art = UIUtil.load(HelloCV.class.getResource("/img/background.png").getFile());
 
+        // v5: in v6, show HUE and Saturation channel of HSV edgeDetection
 
         Mat edges = edgeDetection(sample);
         Mat dilated = dilate(edges);
