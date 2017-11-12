@@ -10,5 +10,7 @@ public class HelloCV {
         System.load("/usr/share/OpenCV/java/libopencv_java320.so");
         Mat mat = Mat.eye(new Size(3,3), CvType.CV_8U);
         System.out.println(mat.dump());
+
+        // v1: In v2, save gray 300x300 mat to disk
     }
 }
