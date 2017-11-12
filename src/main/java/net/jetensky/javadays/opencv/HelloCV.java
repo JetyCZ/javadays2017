@@ -1,8 +1,11 @@
 package net.jetensky.javadays.opencv;
 
+import org.apache.commons.io.IOUtils;
 import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,21 +17,32 @@ public class HelloCV {
         Mat flagDark = UIUtil.load(HelloCV.class.getResource("/img/dark.png").getFile());
         Mat flagLight = UIUtil.load(HelloCV.class.getResource("/img/light.png").getFile());
 
-        /*Mat flagThresholdDark = threshold(flagDark, 80);
-        Mat flagThresholdLight = threshold(flagLight, 230);*/
-
         List<ColorQuantisation.ClusterInfo> clusterInfosDark = kmeans(flagDark);
         List<ColorQuantisation.ClusterInfo> clusterInfosLight = kmeans(flagLight);
 
-        UIUtil.showWindow(clusterInfosDark.get(1).cluster, 0);
-        UIUtil.showWindow(clusterInfosLight.get(1).cluster, 300);
+        Mat ocrInput = clusterInfosDark.get(2).cluster;
+        Core.bitwise_not(ocrInput, ocrInput);
+
+        UIUtil.showWindow(ocrInput, 0);
+
+        String ocrInputFile = "/tmp/a.png";
+        Imgcodecs.imwrite(ocrInputFile, ocrInput);
+
+        try {
+            Process tesseractProcess = Runtime.getRuntime().exec("tesseract " + ocrInputFile + " stdout");
+            InputStream processOutput = tesseractProcess.getInputStream();
+            tesseractProcess.waitFor();
+            System.out.println(IOUtils.toString(processOutput, "UTF-8"));
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Running tesseract failed", e);
+        }
 
     }
 
     private static List<ColorQuantisation.ClusterInfo> kmeans(Mat mat) {
         ColorQuantisation colorQuantisation = new ColorQuantisation();
-        List<ColorQuantisation.ClusterInfo> clusters = colorQuantisation.clusters(mat, 2);
-        UIUtil.showWindow(colorQuantisation.getQuantizedImg(), 0);
+        List<ColorQuantisation.ClusterInfo> clusters = colorQuantisation.clusters(mat, 3);
         return clusters;
     }
 
