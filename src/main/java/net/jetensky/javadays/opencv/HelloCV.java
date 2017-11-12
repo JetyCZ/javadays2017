@@ -12,6 +12,9 @@ public class HelloCV {
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
+        // v3: In v4, findContours, dilate, drawContours
+
+
         UIUtil.showWindow(sample);
         UIUtil.showWindow(edgeDetection(sample));
 
