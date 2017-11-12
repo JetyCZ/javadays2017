@@ -20,7 +20,8 @@ public class HelloCV {
         UIUtil.showWindow(flagThresholdDark, 0);
         UIUtil.showWindow(flagThresholdLight, 900);
 
-        
+        // v7: In v8, implement k-means as CV_32F data sample
+        // dump data, centers, labels
 
     }
 
