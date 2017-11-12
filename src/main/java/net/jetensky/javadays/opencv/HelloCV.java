@@ -11,10 +11,13 @@ public class HelloCV {
     public static void main(String[] args){
         System.load("/usr/share/OpenCV/java/libopencv_java320.so");
         Mat mat = Mat.eye(new Size(300,300), CvType.CV_8UC3);
-        mat.setTo(new Scalar(255,0,255));        // UIUtil.showWindow(mat);
+        mat.setTo(new Scalar(255,0,255));
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
+        /*
+          v4: in v5, foregroundMask from blob, set background to black, set background to background.png
+        */
 
         Mat edges = edgeDetection(sample);
         Mat dilated = dilate(edges);
