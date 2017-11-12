@@ -15,6 +15,8 @@ public class HelloCV {
 
         Mat sample = UIUtil.load(HelloCV.class.getResource("/img/edgeDetection.jpg").getFile());
 
+        // v6: In v7, load dark and light images, and apply threshold (inRange) 80, resp. 230 to V
+
         Mat hsv = new Mat();
         Imgproc.cvtColor(sample, hsv, Imgproc.COLOR_BGR2HSV);
 
