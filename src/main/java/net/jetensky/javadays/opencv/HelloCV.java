@@ -14,5 +14,14 @@ public class HelloCV {
         mat.setTo(new Scalar(128));
         
         Imgcodecs.imwrite("/tmp/a.png", mat);
+
+        /*
+        v2, in v3:
+        read edgeDetection.jpg
+        create jFrame to display mat
+        single channel
+        three channels
+        Canny edge detection (Canny, mean)
+        */
     }
 }
